@@ -19,12 +19,14 @@ class KeyPad extends Component{
         //this.state.counter wont work if dont use super
             super();
             this.state = {
-            value: 0,
-            ans: 0,
-            prev: 0
+                value: 0,
+                ans: 0,
+                prev: 0
             }
             this.pressed = this.pressed.bind(this)
             this.operation = this.operation.bind(this)
+            this.subtraction = this.subtraction.bind(this)
+            this.reset = this.reset.bind(this)
         }
     
     render(){
@@ -50,10 +52,19 @@ class KeyPad extends Component{
                 <div className="keyPadRow">  
                     <Operator by="+" operationMethod={()=>this.operation(this.state.value, this.state.prev)}/>
                     <Key by="0" pressedMethod={this.pressed}/>
-                    <Operator by="-" operationMethod={()=>this.operation(this.state.value, this.state.prev)}/>
+                    <Subtract by="-" subtractionMethod={()=>this.subtraction(this.state.value, this.state.prev)}/>
                 </div>
+                <button className="clear" onClick= {this.reset}>Clear</button>
             </div>
         );
+    }
+
+    reset(){
+        this.setState({
+            value: 0,
+            ans: 0,
+            prev: 0
+        })
     }
 
 
@@ -66,10 +77,21 @@ class KeyPad extends Component{
 
     operation(save, prev){
         console.log(prev)
-        this.setState({
-            ans: Number(save),
-            value: Number(prev) + Number(save)
-        })
+            this.setState({
+                ans: Number(prev) + Number(save),
+                value:  0,
+                prev: save
+            })
+
+    }
+
+    subtraction(save, prev){
+        console.log(prev)
+            this.setState({
+                ans: Number(prev) - Number(save),
+                value:  0,
+                prev: save
+            })
 
     }
 
@@ -105,6 +127,36 @@ class Operator extends Component{
 
 }
 
+class Subtract extends Component{
+
+    constructor(){
+        //this.state.counter wont work if dont use super
+            super();
+            this.state = {
+                value: 0,
+                ans: 0
+            }
+            this.subtraction = this.subtraction.bind(this)
+        }
+
+    render(){
+        return(
+            <div className="subtract">
+                <button onClick={()=>this.subtraction(this.state.value)}>{this.props.by}</button>
+            </div>
+        );
+    }
+
+    subtraction(save, prev){
+        this.setState({
+            ans:save
+        });
+        this.props.subtractionMethod(this.state.ans, prev);
+        
+    }
+
+}
+
 class Key extends Component{
 
     constructor(){
@@ -118,7 +170,7 @@ class Key extends Component{
 
     render(){
         return(
-            <div>
+            <div className="key">
                 <button onClick={()=>this.pressed(this.props.by)}>{this.props.by}</button>
             </div>
         );
